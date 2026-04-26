@@ -10,6 +10,10 @@ impl SmartToolRoom {
         SmartToolRoom { smart_tools }
     }
 
+    pub fn size(&self) -> usize {
+        self.smart_tools.len()
+    }
+
     pub fn get(&self, ix: usize) -> &SmartTool {
         &self.smart_tools[ix]
     }
@@ -38,6 +42,24 @@ mod tests {
     }
 
     #[test]
+    fn test_new() {
+        let result = panic::catch_unwind(|| {
+            setup();
+        });
+        assert!(result.is_ok(), "Код не должен паниковать");
+    }
+
+    #[test]
+    fn test_size() {
+        let r = setup();
+        assert_eq!(
+            3,
+            r.size(),
+            "Некорректно определёно количеставо датчиков в комнате"
+        );
+    }
+
+    #[test]
     fn test_get() {
         let r = setup();
         let t = r.get(1);
@@ -48,6 +70,13 @@ mod tests {
         if let SmartTool::ElectroSocket(e) = t {
             assert!(!e.is_switch_on(), "Возвращен неверный элемент");
         }
+    }
+
+    #[test]
+    #[should_panic]
+    fn test_get_panic() {
+        let r = setup();
+        r.get(100);
     }
 
     #[test]
@@ -63,6 +92,13 @@ mod tests {
             e.switch_on();
             assert!(e.is_switch_on(), "Возвращен неверный элемент");
         }
+    }
+
+    #[test]
+    #[should_panic]
+    fn test_get_mut_panic() {
+        let mut r = setup();
+        r.get_mut(100);
     }
 
     #[test]
