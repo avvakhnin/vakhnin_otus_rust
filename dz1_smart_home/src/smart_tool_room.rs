@@ -1,4 +1,5 @@
 use crate::smart_tool::SmartTool;
+#[derive(Debug)]
 pub struct SmartToolRoom {
     tools: Vec<SmartTool>,
 }
