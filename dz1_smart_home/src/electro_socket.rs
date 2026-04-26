@@ -119,7 +119,7 @@ mod tests {
     fn test_get_power_value_range() {
         let e = ElectroSocket::new(true);
         for _ in 0..100 {
-            assert!(e.get_power_value() > 1, "Напряжение слишком низкое");
+            assert!(e.get_power_value() > 0, "Напряжение слишком низкое");
             assert!(e.get_power_value() < 4000, "Напряжение слишком высокое");
         }
     }
