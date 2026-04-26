@@ -10,6 +10,14 @@ impl SmartToolRoom {
         SmartToolRoom { smart_tools }
     }
 
+    pub fn get(&self, ix: usize) -> &SmartTool {
+        &self.smart_tools[ix]
+    }
+
+    pub fn get_mut(&mut self, ix: usize) -> &mut SmartTool {
+        &mut self.smart_tools[ix]
+    }
+
     pub fn print(&self) {
         println!("{:?}", self);
     }
@@ -22,13 +30,44 @@ mod tests {
     };
     use std::panic;
 
-    #[test]
-    fn test_print() {
+    fn setup() -> SmartToolRoom {
         let st1 = SmartTool::TermDetector(TermDetector::new());
         let st2 = SmartTool::ElectroSocket(ElectroSocket::new(false));
         let st3 = SmartTool::ElectroSocket(ElectroSocket::new(true));
-        let r = SmartToolRoom::new(vec![st1, st2, st3]);
+        SmartToolRoom::new(vec![st1, st2, st3])
+    }
 
+    #[test]
+    fn test_get() {
+        let r = setup();
+        let t = r.get(1);
+        assert!(
+            matches!(t, SmartTool::ElectroSocket { .. }),
+            "Возвращен неверный элемент"
+        );
+        if let SmartTool::ElectroSocket(e) = t {
+            assert!(!e.is_switch_on(), "Возвращен неверный элемент");
+        }
+    }
+
+    #[test]
+    fn test_get_mut() {
+        let mut r = setup();
+        let mut t = r.get_mut(1);
+        assert!(
+            matches!(t, SmartTool::ElectroSocket { .. }),
+            "Возвращен неверный элемент"
+        );
+        if let SmartTool::ElectroSocket(e) = t {
+            assert!(!e.is_switch_on(), "Возвращен неверный элемент");
+            e.switch_on();
+            assert!(e.is_switch_on(), "Возвращен неверный элемент");
+        }
+    }
+
+    #[test]
+    fn test_print() {
+        let r = setup();
         let result = panic::catch_unwind(|| {
             r.print();
         });

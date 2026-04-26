@@ -18,7 +18,7 @@ impl ElectroSocket {
     }
 
     /// Текущая мощность розетки в Вт
-    fn get_power_value(&self) -> i32 {
+    pub fn get_power_value(&self) -> u16 {
         match self.is_switch_on {
             false => 0,
             true => rand::random_range(1..4000),
@@ -26,12 +26,12 @@ impl ElectroSocket {
     }
 
     ///Включаем
-    fn switch_on(&mut self) {
+    pub fn switch_on(&mut self) {
         self.is_switch_on = true;
     }
 
     ///Выключаем
-    fn swich_off(&mut self) {
+    pub fn swich_off(&mut self) {
         self.is_switch_on = false;
     }
 }
