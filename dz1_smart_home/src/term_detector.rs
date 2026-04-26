@@ -2,9 +2,11 @@
 //! Выдаёт температуру в диапазоне -40°C до 40°Cy
 //!
 use std::fmt;
+#[derive(Default)]
 pub struct TermDetector {}
 
 impl TermDetector {
+    ///Конструктор по-умолчанию
     pub fn new() -> Self {
         Self {}
     }
@@ -24,15 +26,16 @@ impl fmt::Debug for TermDetector {
             .finish()
     }
 }
+
 #[cfg(test)]
 mod tests {
-    use std::fmt::Debug;
 
     use crate::term_detector::TermDetector;
 
     #[test]
     fn test_value_in_range() {
-        let td = TermDetector::new();
+        let td = TermDetector::default();
+
         for _ in 0..100 {
             let t = td.get_current_temperature();
             assert!(t > -40., "Показатели температуры {} меньше допустимых", t);
