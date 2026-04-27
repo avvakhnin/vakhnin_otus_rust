@@ -1,3 +1,4 @@
+//! Умный дом, содержащий массив комнат.
 use crate::smart_tool_room::SmartToolRoom;
 #[derive(Debug)]
 pub struct SmartHouse {
@@ -5,22 +6,27 @@ pub struct SmartHouse {
 }
 
 impl SmartHouse {
+    ///Создаёт умный дом со списком комнгат с умными устройствами
     pub fn new(rooms: Vec<SmartToolRoom>) -> Self {
         SmartHouse { rooms }
     }
 
+    ///Возвращает количество комнат в доме
     pub fn size(&self) -> usize {
         self.rooms.len()
     }
 
+    ///Возвращает ссылку на комнату по указанному индексу.
     pub fn get(&self, ix: usize) -> &SmartToolRoom {
         &self.rooms[ix]
     }
 
+    ///Возвращает мутабельную ссылку на комнату по указанному индексу.
     pub fn get_mut(&mut self, ix: usize) -> &mut SmartToolRoom {
         &mut self.rooms[ix]
     }
 
+    ///Выводит в стандартный вывод отчёт о всех комнатах.
     pub fn report(&self) {
         println!("{:?}", self);
     }

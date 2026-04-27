@@ -1,3 +1,4 @@
+//! Комната, содержащая массив умных устройств
 use crate::smart_tool::SmartTool;
 #[derive(Debug)]
 pub struct SmartToolRoom {
@@ -5,22 +6,25 @@ pub struct SmartToolRoom {
 }
 
 impl SmartToolRoom {
+    ///Создает комнату со списком умных устройств
     pub fn new(smart_tools: Vec<SmartTool>) -> SmartToolRoom {
         SmartToolRoom { smart_tools }
     }
 
+    ///Возвращает количество устройств в комнате
     pub fn size(&self) -> usize {
         self.smart_tools.len()
     }
-
+    ///Возвращает ссылку на устройство по указанному индексу
     pub fn get(&self, ix: usize) -> &SmartTool {
         &self.smart_tools[ix]
     }
 
+    ///Возвращает мутабельную ссылку на устройство по указанному индексу.
     pub fn get_mut(&mut self, ix: usize) -> &mut SmartTool {
         &mut self.smart_tools[ix]
     }
-
+    /// Выводит в стандартный вывод отчёт о всех устройствах в комнате.
     pub fn report(&self) {
         println!("{:?}", self);
     }
