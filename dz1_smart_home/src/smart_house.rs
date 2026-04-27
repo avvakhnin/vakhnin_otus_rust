@@ -21,7 +21,7 @@ impl SmartHouse {
         &mut self.rooms[ix]
     }
 
-    pub fn print(&self) {
+    pub fn report(&self) {
         println!("{:?}", self);
     }
 }
@@ -95,10 +95,10 @@ mod tests {
     }
 
     #[test]
-    fn test_print() {
+    fn test_report() {
         let r = setup();
         let result = panic::catch_unwind(|| {
-            r.print();
+            r.report();
         });
 
         assert!(result.is_ok(), "Код не должен паниковать");

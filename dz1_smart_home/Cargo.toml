@@ -6,3 +6,6 @@ authors = ["Anton V. Vakhnin"]
 
 [dependencies]
 rand = "=0.10.1"
+
+[[example]]
+name =  "smart_home_report"

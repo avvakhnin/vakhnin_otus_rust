@@ -1,5 +1,4 @@
 use crate::smart_tool::SmartTool;
-use std::fmt;
 #[derive(Debug)]
 pub struct SmartToolRoom {
     smart_tools: Vec<SmartTool>,
@@ -22,7 +21,7 @@ impl SmartToolRoom {
         &mut self.smart_tools[ix]
     }
 
-    pub fn print(&self) {
+    pub fn report(&self) {
         println!("{:?}", self);
     }
 }
@@ -102,10 +101,10 @@ mod tests {
     }
 
     #[test]
-    fn test_print() {
+    fn test_report() {
         let r = setup();
         let result = panic::catch_unwind(|| {
-            r.print();
+            r.report();
         });
 
         assert!(result.is_ok(), "Код не должен паниковать");
