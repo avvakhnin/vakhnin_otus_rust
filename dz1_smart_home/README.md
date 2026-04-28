@@ -17,3 +17,6 @@ cargo run --example smart_home_report
 
 ./examples/smart_home_report.rs
 
+Запуск более простого примера использования
+
+cargo run

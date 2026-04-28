@@ -41,13 +41,13 @@ mod tests {
     use std::panic;
 
     fn setup() -> SmartHouse {
-        let st1 = SmartTool::TermDetector(TermDetector::new());
+        let st1 = SmartTool::TermDetector(TermDetector::new("detector 1"));
         let st2 = SmartTool::ElectroSocket(ElectroSocket::new(false));
         let st3 = SmartTool::ElectroSocket(ElectroSocket::new(true));
         let str1 = SmartToolRoom::new(vec![st1, st2, st3]);
 
         let st1 = SmartTool::ElectroSocket(ElectroSocket::new(true));
-        let st2 = SmartTool::TermDetector(TermDetector::new());
+        let st2 = SmartTool::TermDetector(TermDetector::new("detector 2"));
         let str2 = SmartToolRoom::new(vec![st1, st2]);
 
         SmartHouse::new(vec![str1, str2])

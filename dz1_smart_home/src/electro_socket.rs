@@ -31,7 +31,7 @@ impl ElectroSocket {
     }
 
     ///Выключаем
-    pub fn swich_off(&mut self) {
+    pub fn switch_off(&mut self) {
         self.is_switch_on = false;
     }
 }
@@ -50,8 +50,6 @@ impl fmt::Debug for ElectroSocket {
 
 #[cfg(test)]
 mod tests {
-
-    use std::arch::x86_64::_CMP_FALSE_OQ;
 
     use crate::electro_socket::ElectroSocket;
 
@@ -102,7 +100,7 @@ mod tests {
     #[test]
     fn test_switch_off() {
         let mut e = ElectroSocket::new(true);
-        e.swich_off();
+        e.switch_off();
         assert!(!e.is_switch_on, "Не удалось выключить розетку");
     }
 

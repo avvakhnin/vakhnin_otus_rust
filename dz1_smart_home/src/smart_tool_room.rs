@@ -38,7 +38,7 @@ mod tests {
     use std::panic;
 
     fn setup() -> SmartToolRoom {
-        let st1 = SmartTool::TermDetector(TermDetector::new());
+        let st1 = SmartTool::TermDetector(TermDetector::new("detector"));
         let st2 = SmartTool::ElectroSocket(ElectroSocket::new(false));
         let st3 = SmartTool::ElectroSocket(ElectroSocket::new(true));
         SmartToolRoom::new(vec![st1, st2, st3])
