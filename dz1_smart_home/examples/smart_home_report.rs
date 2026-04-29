@@ -31,9 +31,9 @@ fn main() {
 
     //Приводим устройство к нужному типу и переключаем состояние
     if let SmartTool::ElectroSocket(e_socket) = smart_tool {
-        assert!(!e_socket.is_switch_on());
-        e_socket.switch_on();
         assert!(e_socket.is_switch_on());
+        e_socket.switch_off();
+        assert!(!e_socket.is_switch_on());
     }
 
     //Повторно выводим отчёт
@@ -47,12 +47,12 @@ fn create_smart_house() -> SmartHouse {
     SmartHouse::new(vec![
         SmartToolRoom::new(vec![
             SmartTool::ElectroSocket(ElectroSocket::new(false)),
-            SmartTool::TermDetector(TermDetector::new()),
-            SmartTool::ElectroSocket(ElectroSocket::new(false)),
+            SmartTool::TermDetector(TermDetector::new("detector 1")),
+            SmartTool::ElectroSocket(ElectroSocket::new(true)),
             SmartTool::ElectroSocket(ElectroSocket::new(true)),
         ]),
         SmartToolRoom::new(vec![
-            SmartTool::TermDetector(TermDetector::new()),
+            SmartTool::TermDetector(TermDetector::new("detector 2")),
             SmartTool::ElectroSocket(ElectroSocket::new(false)),
         ]),
         SmartToolRoom::new(vec![]),

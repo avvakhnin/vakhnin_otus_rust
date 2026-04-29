@@ -18,7 +18,7 @@ impl SmartTool {
 #[cfg(test)]
 mod tests {
 
-    use std::{panic, ptr::copy_nonoverlapping};
+    use std::panic;
 
     use crate::{
         electro_socket::ElectroSocket, smart_tool::SmartTool, term_detector::TermDetector,
@@ -26,7 +26,7 @@ mod tests {
 
     #[test]
     fn test_debug() {
-        let st1 = SmartTool::TermDetector(TermDetector::new());
+        let st1 = SmartTool::TermDetector(TermDetector::new("detector"));
         let st2 = SmartTool::ElectroSocket(ElectroSocket::new(false));
         let st3 = SmartTool::ElectroSocket(ElectroSocket::new(true));
 
@@ -43,7 +43,7 @@ mod tests {
 
     #[test]
     fn test_report() {
-        let st1 = SmartTool::TermDetector(TermDetector::new());
+        let st1 = SmartTool::TermDetector(TermDetector::new("detector"));
         let st2 = SmartTool::ElectroSocket(ElectroSocket::new(false));
         let st3 = SmartTool::ElectroSocket(ElectroSocket::new(true));
 
