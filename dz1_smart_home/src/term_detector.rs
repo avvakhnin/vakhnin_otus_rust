@@ -65,7 +65,7 @@ mod tests {
         let td = TermDetector::new("any");
         let debug_str = format!("{:?}", td);
         assert!(
-            debug_str.starts_with("TermDetector { temperature_celsius: \""),
+            debug_str.starts_with("TermDetector \"any\" { temperature_celsius: \""),
             "Неверный формат вывода"
         );
         assert!(debug_str.ends_with("°C\" }"), "Неверный формат вывода");
