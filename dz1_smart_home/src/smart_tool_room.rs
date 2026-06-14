@@ -85,7 +85,7 @@ mod tests {
     #[test]
     fn test_get_mut() {
         let mut r = setup();
-        let mut t = r.get_mut(1);
+        let t = r.get_mut(1);
         assert!(
             matches!(t, SmartTool::ElectroSocket { .. }),
             "Возвращен неверный элемент"

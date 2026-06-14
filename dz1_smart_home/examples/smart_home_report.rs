@@ -19,9 +19,12 @@ fn main() {
     //println!("{:#?}", smart_house);
 
     //Выбираем первую комнату
-    let smart_room = smart_house.get_mut(0);
+    let smart_room = smart_house.get_mut("main");
+
+    assert!(smart_room.is_some());
+
     //Выбираем второе устройство в комнате
-    let smart_tool = smart_room.get_mut(2);
+    let smart_tool = smart_room.unwrap().get_mut(2);
 
     //Проверяем что устройство соответствует нашим ожиданиям - это должен быть выключатель
     assert!(
@@ -42,19 +45,25 @@ fn main() {
     //println!("{:#?}", smart_house);
 }
 
-/// Декларативное создание умного дома с коллекцие комнат, в каждой из которых 0 и более умных устройств
+/// Декларативное создание умного дома с коллекцией комнат, в каждой из которых 0 и более умных устройств
 fn create_smart_house() -> SmartHouse {
-    SmartHouse::new(vec![
+    let mut smart_house = SmartHouse::new();
+    smart_house.insert(
+        "main",
         SmartToolRoom::new(vec![
             SmartTool::ElectroSocket(ElectroSocket::new(false)),
             SmartTool::TermDetector(TermDetector::new("detector 1")),
             SmartTool::ElectroSocket(ElectroSocket::new(true)),
             SmartTool::ElectroSocket(ElectroSocket::new(true)),
         ]),
+    );
+    smart_house.insert(
+        "additional",
         SmartToolRoom::new(vec![
             SmartTool::TermDetector(TermDetector::new("detector 2")),
             SmartTool::ElectroSocket(ElectroSocket::new(false)),
         ]),
-        SmartToolRoom::new(vec![]),
-    ])
+    );
+    smart_house.insert("empty", SmartToolRoom::new(vec![]));
+    smart_house
 }
