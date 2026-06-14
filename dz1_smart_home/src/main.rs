@@ -18,13 +18,13 @@ fn main() {
     println!("Обернули датчик в enum {:?}", t_tool);
 
     let e_tool = SmartTool::ElectroSocket(e);
-    println!("Обернули розетку в enum{:?}", e_tool);
+    println!("Обернули розетку в enum {:?}", e_tool);
 
     let r = SmartToolRoom::new(vec![t_tool, e_tool]);
-    println!("Создали комнату из двух умных приборо{:?}", r);
+    println!("Создали комнату из двух умных приборов {:?}", r);
 
     let mut h = SmartHouse::new(vec![r]);
-    println!("Создали умный дом из одной комнаты{:?}", h);
+    println!("Создали умный дом из одной комнаты {:?}", h);
 
     h.report();
 

@@ -1,4 +1,6 @@
 //! Умный дом, содержащий массив комнат.
+use std::ops::{Index, IndexMut};
+
 use crate::smart_tool_room::SmartToolRoom;
 #[derive(Debug)]
 pub struct SmartHouse {
@@ -18,12 +20,12 @@ impl SmartHouse {
 
     ///Возвращает ссылку на комнату по указанному индексу.
     pub fn get(&self, ix: usize) -> &SmartToolRoom {
-        &self.rooms[ix]
+        self.rooms.index(ix)
     }
 
     ///Возвращает мутабельную ссылку на комнату по указанному индексу.
     pub fn get_mut(&mut self, ix: usize) -> &mut SmartToolRoom {
-        &mut self.rooms[ix]
+        self.rooms.index_mut(ix)
     }
 
     ///Выводит в стандартный вывод отчёт о всех комнатах.
