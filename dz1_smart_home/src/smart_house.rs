@@ -20,6 +20,7 @@ impl SmartHouse {
         self.rooms.len()
     }
 
+    ///Добавляет комнату в дом под уникальным именем
     pub fn insert(&mut self, name: &'static str, room: SmartToolRoom) -> Option<SmartToolRoom> {
         self.rooms.insert(name, room)
     }
