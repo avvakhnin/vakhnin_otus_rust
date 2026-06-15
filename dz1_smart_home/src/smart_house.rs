@@ -44,30 +44,41 @@ impl SmartHouse {
 #[cfg(test)]
 mod tests {
     use crate::{
-        electro_socket::ElectroSocket, smart_house::SmartHouse, smart_tool::SmartTool,
-        smart_tool_room::SmartToolRoom, term_detector::TermDetector,
+        electro_socket::ElectroSocket,
+        smart_house::SmartHouse,
+        smart_tool::SmartTool,
+        smart_tool_room::{SmartToolRoom, smart_room},
+        term_detector::TermDetector,
     };
     use std::{assert_matches, panic};
 
     fn setup() -> SmartHouse {
         let mut house = SmartHouse::new();
-        let st1 = SmartTool::TermDetector(TermDetector::new("detector 1"));
-        let st2 = SmartTool::ElectroSocket(ElectroSocket::new(false));
-        let st3 = SmartTool::ElectroSocket(ElectroSocket::new(true));
-        house.insert("first", SmartToolRoom::new(vec![st1, st2, st3]));
+        house.insert(
+            "first",
+            smart_room!("a1" => SmartTool::TermDetector(TermDetector::new("detector 1")),
+                "a2" => SmartTool::ElectroSocket(ElectroSocket::new(false)),
+                "a3" => SmartTool::ElectroSocket(ElectroSocket::new(true))
+            ),
+        );
 
-        let st1 = SmartTool::ElectroSocket(ElectroSocket::new(true));
-        let st2 = SmartTool::TermDetector(TermDetector::new("detector 2"));
-        house.insert("additional", SmartToolRoom::new(vec![st1, st2]));
+        house.insert(
+            "additional",
+            smart_room!(
+                "b1" => SmartTool::ElectroSocket(ElectroSocket::new(true)),
+                "b2" => SmartTool::TermDetector(TermDetector::new("detector 2"))
+            ),
+        );
+
         house
     }
 
     #[test]
     fn test_new() {
-        let result = panic::catch_unwind(|| SmartHouse::new());
+        let result = panic::catch_unwind(SmartHouse::new);
 
         assert!(result.is_ok(), "Код не должен паниковать");
-        assert_eq!(0, result.unwrap().size(), "Не корректно создан объект");
+        assert_eq!(0, result.unwrap().size(), "Некорректно создан объект");
     }
 
     #[test]
@@ -83,8 +94,8 @@ mod tests {
     #[test]
     fn test_insert() {
         let mut house = SmartHouse::new();
-        house.insert("new", SmartToolRoom::new(vec![]));
-        assert_eq!(1, house.size(), "Не верно отработала вставка");
+        house.insert("new", smart_room!());
+        assert_eq!(1, house.size(), "Неверно отработала вставка");
     }
 
     #[test]
@@ -98,7 +109,7 @@ mod tests {
     fn test_get_none() {
         let h = setup();
         let r = h.get("bathroom");
-        assert!(r.is_none());
+        assert!(r.is_none(), "Возвращен неверный элемент");
     }
 
     #[test]
@@ -112,7 +123,7 @@ mod tests {
     fn test_get_mut_none() {
         let mut h = setup();
         let r = h.get_mut("hall");
-        assert!(r.is_none());
+        assert!(r.is_none(), "Возвращен неверный элемент");
     }
 
     #[test]
