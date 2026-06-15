@@ -41,6 +41,7 @@ impl SmartToolRoom {
 }
 
 ///Макрос для создания SmartRoom с парами ключ => значение
+#[macro_export]
 macro_rules! smart_room {
     () => {
         SmartToolRoom::new()
@@ -52,8 +53,6 @@ macro_rules! smart_room {
         room}
     };
 }
-
-pub(crate) use smart_room;
 
 #[cfg(test)]
 mod tests {

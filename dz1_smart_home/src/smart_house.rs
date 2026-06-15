@@ -44,11 +44,8 @@ impl SmartHouse {
 #[cfg(test)]
 mod tests {
     use crate::{
-        electro_socket::ElectroSocket,
-        smart_house::SmartHouse,
-        smart_tool::SmartTool,
-        smart_tool_room::{SmartToolRoom, smart_room},
-        term_detector::TermDetector,
+        electro_socket::ElectroSocket, smart_house::SmartHouse, smart_room, smart_tool::SmartTool,
+        smart_tool_room::SmartToolRoom, term_detector::TermDetector,
     };
     use std::{assert_matches, panic};
 
