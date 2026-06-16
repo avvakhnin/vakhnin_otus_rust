@@ -1,7 +1,9 @@
 //! Умный дом, содержащий массив комнат.
-use std::{collections::HashMap, io::Error};
+use std::collections::HashMap;
 
-use crate::smart_tool_room::SmartToolRoom;
+use crate::{
+    smart_house_error::SmartHouseError, smart_tool::SmartTool, smart_tool_room::SmartToolRoom,
+};
 #[derive(Debug, Default)]
 pub struct SmartHouse {
     rooms: HashMap<&'static str, SmartToolRoom>,
@@ -39,8 +41,16 @@ impl SmartHouse {
         &self,
         room_name: &'static str,
         tool_name: &'static str,
-    ) -> Result<&SmartToolRoom, SmartHouseError> {
-        self.get(room).ok_or(SmartHouseError::new(""))
+    ) -> Result<&SmartTool, SmartHouseError> {
+        let room = self
+            .get(room_name)
+            .ok_or(SmartHouseError::RoomNotFound(room_name))?;
+
+        let tool = room
+            .get(tool_name)
+            .ok_or(SmartHouseError::ToolNotFound(tool_name))?;
+
+        Ok(tool)
     }
 
     ///Выводит в стандартный вывод отчёт о всех комнатах.
@@ -49,23 +59,12 @@ impl SmartHouse {
     }
 }
 
-struct SmartHouseError {
-    message: String,
-}
-
-impl SmartHouseError {
-    fn new(msg: &str) -> Self {
-        SmartHouseError {
-            message: msg.to_string(),
-        }
-    }
-}
-
 #[cfg(test)]
 mod tests {
     use crate::{
-        electro_socket::ElectroSocket, smart_house::SmartHouse, smart_room, smart_tool::SmartTool,
-        smart_tool_room::SmartToolRoom, term_detector::TermDetector,
+        electro_socket::ElectroSocket, smart_house::SmartHouse, smart_house_error::SmartHouseError,
+        smart_room, smart_tool::SmartTool, smart_tool_room::SmartToolRoom,
+        term_detector::TermDetector,
     };
     use std::{assert_matches, panic};
 
@@ -151,5 +150,36 @@ mod tests {
         });
 
         assert!(result.is_ok(), "Код не должен паниковать");
+    }
+
+    #[test]
+    fn test_get_smart_tool() {
+        let h = setup();
+        let st = h.get_smart_tool("first", "a3");
+
+        assert_matches!(st, Ok(SmartTool::ElectroSocket(t)) if t.is_switch_on(), "Некорректноу устройствао извлекли с get_smrt_tool");
+    }
+    #[test]
+    fn test_get_smart_tool_room_not_found() {
+        let h = setup();
+        let st = h.get_smart_tool("any_room", "a3");
+
+        assert_matches!(
+            st,
+            Err(SmartHouseError::RoomNotFound(_)),
+            "Некорректно определили ошибку при отсутвии комнаты"
+        );
+    }
+
+    #[test]
+    fn test_get_smart_tool_tool_not_found() {
+        let h = setup();
+        let st = h.get_smart_tool("first", "u3");
+
+        assert_matches!(
+            st,
+            Err(SmartHouseError::ToolNotFound(_)),
+            "Некорректно определили ошибку при отсутвии устройства"
+        );
     }
 }
