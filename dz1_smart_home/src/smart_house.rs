@@ -1,5 +1,5 @@
 //! Умный дом, содержащий массив комнат.
-use std::collections::HashMap;
+use std::{collections::HashMap, io::Error};
 
 use crate::smart_tool_room::SmartToolRoom;
 #[derive(Debug, Default)]
@@ -35,9 +35,29 @@ impl SmartHouse {
         self.rooms.get_mut(name)
     }
 
+    pub fn get_smart_tool(
+        &self,
+        room_name: &'static str,
+        tool_name: &'static str,
+    ) -> Result<&SmartToolRoom, SmartHouseError> {
+        self.get(room).ok_or(SmartHouseError::new(""))
+    }
+
     ///Выводит в стандартный вывод отчёт о всех комнатах.
     pub fn report(&self) {
         println!("{:?}", self);
+    }
+}
+
+struct SmartHouseError {
+    message: String,
+}
+
+impl SmartHouseError {
+    fn new(msg: &str) -> Self {
+        SmartHouseError {
+            message: msg.to_string(),
+        }
     }
 }
 
