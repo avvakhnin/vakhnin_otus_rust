@@ -15,10 +15,22 @@ impl SmartTool {
     }
 }
 
+impl From<TermDetector> for SmartTool {
+    fn from(value: TermDetector) -> Self {
+        SmartTool::TermDetector(value)
+    }
+}
+
+impl From<ElectroSocket> for SmartTool {
+    fn from(value: ElectroSocket) -> Self {
+        SmartTool::ElectroSocket(value)
+    }
+}
+
 #[cfg(test)]
 mod tests {
 
-    use std::panic;
+    use std::{assert_matches, panic};
 
     use crate::{
         electro_socket::ElectroSocket, smart_tool::SmartTool, term_detector::TermDetector,
@@ -56,5 +68,17 @@ mod tests {
         });
 
         assert!(result.is_ok(), "Код не должен паниковать");
+    }
+
+    #[test]
+    fn test_from_detector() {
+        let st = SmartTool::from(TermDetector::new("detector"));
+        assert_matches!(st, SmartTool::TermDetector(t) if t.get_name() == "detector");
+    }
+
+    #[test]
+    fn test_from_electro_socket() {
+        let st = SmartTool::from(ElectroSocket::new(true));
+        assert_matches!(st, SmartTool::ElectroSocket(t) if t.is_switch_on(), "Некорректная реализация From<T>");
     }
 }

@@ -21,8 +21,8 @@ impl SmartToolRoom {
     }
 
     ///Добавляет устройство в дом под уникальным именемш
-    pub fn insert(&mut self, name: &'static str, tool: SmartTool) -> Option<SmartTool> {
-        self.smart_tools.insert(name, tool)
+    pub fn insert(&mut self, name: &'static str, tool: impl Into<SmartTool>) -> Option<SmartTool> {
+        self.smart_tools.insert(name, tool.into())
     }
 
     ///Возвращает ссылку на устройство по указанному индексу
@@ -63,9 +63,9 @@ mod tests {
     use std::{assert_matches, panic};
 
     fn setup() -> SmartToolRoom {
-        smart_room!("detector" => SmartTool::TermDetector(TermDetector::new("detector")),
-            "socket1" => SmartTool::ElectroSocket(ElectroSocket::new(false)),
-            "socket2" => SmartTool::ElectroSocket(ElectroSocket::new(true)))
+        smart_room!("detector" => TermDetector::new("detector"),
+            "socket1" => ElectroSocket::new(false),
+            "socket2" => ElectroSocket::new(true))
     }
 
     #[test]
@@ -88,7 +88,7 @@ mod tests {
     #[test]
     fn test_insert() {
         let mut room = SmartToolRoom::new();
-        room.insert("new", SmartTool::ElectroSocket(ElectroSocket::new(true)));
+        room.insert("new", ElectroSocket::new(true));
         assert_eq!(1, room.size(), "Неверно отработала вставка");
     }
 

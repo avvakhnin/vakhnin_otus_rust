@@ -53,17 +53,17 @@ mod tests {
         let mut house = SmartHouse::new();
         house.insert(
             "first",
-            smart_room!("a1" => SmartTool::TermDetector(TermDetector::new("detector 1")),
-                "a2" => SmartTool::ElectroSocket(ElectroSocket::new(false)),
-                "a3" => SmartTool::ElectroSocket(ElectroSocket::new(true))
+            smart_room!("a1" => TermDetector::new("detector 1"),
+                "a2" => ElectroSocket::new(false),
+                "a3" => ElectroSocket::new(true)
             ),
         );
 
         house.insert(
             "additional",
             smart_room!(
-                "b1" => SmartTool::ElectroSocket(ElectroSocket::new(true)),
-                "b2" => SmartTool::TermDetector(TermDetector::new("detector 2"))
+                "b1" => ElectroSocket::new(true),
+                "b2" => TermDetector::new("detector 2")
             ),
         );
 

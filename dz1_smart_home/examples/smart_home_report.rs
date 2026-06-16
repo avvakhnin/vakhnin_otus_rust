@@ -52,17 +52,17 @@ fn create_smart_house() -> SmartHouse {
         "main",
         smart_room!(
 
-            "0" => SmartTool::ElectroSocket(ElectroSocket::new(false)),
-            "1" => SmartTool::TermDetector(TermDetector::new("detector 1")),
-            "2" => SmartTool::ElectroSocket(ElectroSocket::new(true)),
-            "3" => SmartTool::ElectroSocket(ElectroSocket::new(true)),
+            "0" => ElectroSocket::new(false),
+            "1" => TermDetector::new("detector 1"),
+            "2" => ElectroSocket::new(true),
+            "3" => ElectroSocket::new(true),
         ),
     );
     smart_house.insert(
         "additional",
         smart_room!(
-            "0" => SmartTool::TermDetector(TermDetector::new("detector 2")),
-            "1" => SmartTool::ElectroSocket(ElectroSocket::new(false)),
+            "0" => TermDetector::new("detector 2"),
+            "1" => ElectroSocket::new(false),
         ),
     );
     smart_house.insert("empty", smart_room!());
