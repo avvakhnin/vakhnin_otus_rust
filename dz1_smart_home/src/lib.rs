@@ -1,4 +1,5 @@
 pub mod electro_socket;
+pub mod report;
 pub mod smart_house;
 pub mod smart_house_error;
 pub mod smart_tool;

@@ -2,20 +2,12 @@
 //! Выдаёт температуру в диапазоне -40°C до 40°Cy
 //!
 use std::fmt;
-pub struct TermDetector {
-    name: String,
-}
+pub struct TermDetector {}
 
 impl TermDetector {
     ///Конструктор по-умолчанию
-    pub fn new(name: &str) -> Self {
-        Self {
-            name: name.to_string(),
-        }
-    }
-
-    pub fn get_name(&self) -> &String {
-        &self.name
+    pub fn new() -> Self {
+        Self {}
     }
 
     /// Выдаёт температуру в диапазоне -40°C до 40°C
@@ -28,7 +20,7 @@ impl fmt::Debug for TermDetector {
     fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
         let t = self.get_current_temperature();
         let ts = format!("{:.2}°C", t);
-        f.debug_struct(&format!("TermDetector \"{}\"", self.get_name()))
+        f.debug_struct(&format!("TermDetector"))
             .field("temperature_celsius", &ts)
             .finish()
     }
@@ -40,18 +32,8 @@ mod tests {
     use crate::term_detector::TermDetector;
 
     #[test]
-    fn test_name() {
-        let td = TermDetector::new("special 1");
-        assert_eq!(
-            "special 1",
-            td.get_name(),
-            "Вернулось некорректное название датчика"
-        );
-    }
-
-    #[test]
     fn test_value_in_range() {
-        let td = TermDetector::new("any");
+        let td = TermDetector::new();
 
         for _ in 0..100 {
             let t = td.get_current_temperature();
@@ -62,10 +44,10 @@ mod tests {
 
     #[test]
     fn test_debug() {
-        let td = TermDetector::new("any");
+        let td = TermDetector::new();
         let debug_str = format!("{:?}", td);
         assert!(
-            debug_str.starts_with("TermDetector \"any\" { temperature_celsius: \""),
+            debug_str.starts_with("TermDetector { temperature_celsius: \""),
             "Неверный формат вывода"
         );
         assert!(debug_str.ends_with("°C\" }"), "Неверный формат вывода");

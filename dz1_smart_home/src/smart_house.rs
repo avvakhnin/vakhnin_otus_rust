@@ -2,7 +2,8 @@
 use std::collections::HashMap;
 
 use crate::{
-    smart_house_error::SmartHouseError, smart_tool::SmartTool, smart_tool_room::SmartToolRoom,
+    report::Report, smart_house_error::SmartHouseError, smart_tool::SmartTool,
+    smart_tool_room::SmartToolRoom,
 };
 #[derive(Debug, Default)]
 pub struct SmartHouse {
@@ -52,12 +53,9 @@ impl SmartHouse {
 
         Ok(tool)
     }
-
-    ///Выводит в стандартный вывод отчёт о всех комнатах.
-    pub fn report(&self) {
-        println!("{:?}", self);
-    }
 }
+
+impl Report for SmartHouse {}
 
 #[cfg(test)]
 mod tests {
@@ -72,7 +70,7 @@ mod tests {
         let mut house = SmartHouse::new();
         house.insert(
             "first",
-            smart_room!("a1" => TermDetector::new("detector 1"),
+            smart_room!("a1" => TermDetector::new(),
                 "a2" => ElectroSocket::new(false),
                 "a3" => ElectroSocket::new(true)
             ),
@@ -82,7 +80,7 @@ mod tests {
             "additional",
             smart_room!(
                 "b1" => ElectroSocket::new(true),
-                "b2" => TermDetector::new("detector 2")
+                "b2" => TermDetector::new()
             ),
         );
 
@@ -140,16 +138,6 @@ mod tests {
         let mut h = setup();
         let r = h.get_mut("hall");
         assert!(r.is_none(), "Возвращен неверный элемент");
-    }
-
-    #[test]
-    fn test_report() {
-        let r = setup();
-        let result = panic::catch_unwind(|| {
-            r.report();
-        });
-
-        assert!(result.is_ok(), "Код не должен паниковать");
     }
 
     #[test]

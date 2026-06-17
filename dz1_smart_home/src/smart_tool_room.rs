@@ -1,7 +1,7 @@
 //! Комната, содержащая массив умных устройств
 use std::collections::HashMap;
 
-use crate::smart_tool::SmartTool;
+use crate::{report::Report, smart_tool::SmartTool};
 #[derive(Debug)]
 pub struct SmartToolRoom {
     smart_tools: HashMap<&'static str, SmartTool>,
@@ -34,11 +34,9 @@ impl SmartToolRoom {
     pub fn get_mut(&mut self, name: &'static str) -> Option<&mut SmartTool> {
         self.smart_tools.get_mut(name)
     }
-    /// Выводит в стандартный вывод отчёт о всех устройствах в комнате.
-    pub fn report(&self) {
-        println!("{:?}", self);
-    }
 }
+
+impl Report for SmartToolRoom {}
 
 ///Макрос для создания SmartRoom с парами ключ => значение
 #[macro_export]
@@ -57,13 +55,13 @@ macro_rules! smart_room {
 #[cfg(test)]
 mod tests {
     use crate::{
-        electro_socket::ElectroSocket, smart_tool::SmartTool, smart_tool_room::SmartToolRoom,
-        term_detector::TermDetector,
+        electro_socket::ElectroSocket, report::Report, smart_tool::SmartTool,
+        smart_tool_room::SmartToolRoom, term_detector::TermDetector,
     };
     use std::{assert_matches, panic};
 
     fn setup() -> SmartToolRoom {
-        smart_room!("detector" => TermDetector::new("detector"),
+        smart_room!("detector" => TermDetector::new(),
             "socket1" => ElectroSocket::new(false),
             "socket2" => ElectroSocket::new(true))
     }
@@ -127,13 +125,5 @@ mod tests {
         let mut r = setup();
         let t = r.get_mut("micro");
         assert!(t.is_none(), "Возвращен неверный элемент");
-    }
-
-    #[test]
-    fn test_report() {
-        let r = setup();
-        let result = panic::catch_unwind(|| r.report());
-
-        assert!(result.is_ok(), "Код не должен паниковать");
     }
 }

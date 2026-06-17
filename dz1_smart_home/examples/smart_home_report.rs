@@ -6,17 +6,17 @@
 //! cargo run --example smart_home_report
 //! ```
 use dz1_smart_home::{
-    electro_socket::ElectroSocket, smart_house::SmartHouse, smart_room, smart_tool::SmartTool,
-    smart_tool_room::SmartToolRoom, term_detector::TermDetector,
+    electro_socket::ElectroSocket, report::Report, smart_house::SmartHouse, smart_room,
+    smart_tool::SmartTool, smart_tool_room::SmartToolRoom, term_detector::TermDetector,
 };
 
 fn main() {
     //Создаем экземпляр умного дома
     let mut smart_house = create_smart_house();
     //Выводим отчёт его состояния
-    smart_house.report();
+    println!("{}", smart_house.get_report());
     //Тот же самый отчёт в форматированном виде для удобства
-    //println!("{:#?}", smart_house);
+    //println!("{}", smart_house.get_report_pretty());
 
     //Выбираем первую комнату
     let smart_room = smart_house.get_mut("main");
@@ -40,9 +40,9 @@ fn main() {
     }
 
     //Повторно выводим отчёт
-    smart_house.report();
+    println!("{}", smart_house.get_report());
     //Тот же самый отчёт в форматированном виде для удобства
-    //println!("{:#?}", smart_house);
+    //println!("{}", smart_house.get_report_pretty());
 }
 
 /// Декларативное создание умного дома с коллекцией комнат, в каждой из которых 0 и более умных устройств
@@ -51,9 +51,8 @@ fn create_smart_house() -> SmartHouse {
     smart_house.insert(
         "main",
         smart_room!(
-
             "0" => ElectroSocket::new(false),
-            "1" => TermDetector::new("detector 1"),
+            "1" => TermDetector::new(),
             "2" => ElectroSocket::new(true),
             "3" => ElectroSocket::new(true),
         ),
@@ -61,7 +60,7 @@ fn create_smart_house() -> SmartHouse {
     smart_house.insert(
         "additional",
         smart_room!(
-            "0" => TermDetector::new("detector 2"),
+            "0" => TermDetector::new(),
             "1" => ElectroSocket::new(false),
         ),
     );
