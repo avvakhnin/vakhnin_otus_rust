@@ -74,7 +74,7 @@ mod tests {
         let mut house = SmartHouse::new();
         house.insert(
             "first",
-            smart_room!("a1" => TermDetector::new(),
+            smart_room!("a1" => TermDetector::default(),
                 "a2" => ElectroSocket::new(false),
                 "a3" => ElectroSocket::new(true)
             ),
@@ -84,7 +84,7 @@ mod tests {
             "additional",
             smart_room!(
                 "b1" => ElectroSocket::new(true),
-                "b2" => TermDetector::new()
+                "b2" => TermDetector::default()
             ),
         );
 
