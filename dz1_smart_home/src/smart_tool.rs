@@ -25,7 +25,7 @@ impl From<ElectroSocket> for SmartTool {
 #[cfg(test)]
 mod tests {
 
-    use std::{assert_matches, panic};
+    use std::assert_matches;
 
     use crate::{
         electro_socket::ElectroSocket, smart_tool::SmartTool, term_detector::TermDetector,

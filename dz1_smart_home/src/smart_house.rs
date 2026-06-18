@@ -38,6 +38,10 @@ impl SmartHouse {
         self.rooms.get_mut(name)
     }
 
+    pub fn remove(&mut self, name: &'static str) -> Option<SmartToolRoom> {
+        self.rooms.remove(name)
+    }
+
     pub fn get_smart_tool(
         &self,
         room_name: &'static str,
@@ -157,6 +161,13 @@ mod tests {
             Err(SmartHouseError::RoomNotFound(_)),
             "Некорректно определили ошибку при отсутвии комнаты"
         );
+    }
+    #[test]
+    fn test_remove() {
+        let mut home = setup();
+        let room = home.remove("first");
+        assert_eq!(1, home.size(), "Неверно отработало удаление");
+        assert_matches!(room, Some(room) if room.size() == 3, "Неверно отработало удаление");
     }
 
     #[test]

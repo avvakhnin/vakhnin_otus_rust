@@ -52,7 +52,7 @@ fn create_smart_house() -> SmartHouse {
         "main",
         smart_room!(
             "0" => ElectroSocket::new(false),
-            "1" => TermDetector::new(),
+            "1" => TermDetector::default(),
             "2" => ElectroSocket::new(true),
             "3" => ElectroSocket::new(true),
         ),
@@ -60,7 +60,7 @@ fn create_smart_house() -> SmartHouse {
     smart_house.insert(
         "additional",
         smart_room!(
-            "0" => TermDetector::new(),
+            "0" => TermDetector::default(),
             "1" => ElectroSocket::new(false),
         ),
     );
