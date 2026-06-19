@@ -1,55 +1,73 @@
 //! Комната, содержащая массив умных устройств
-use crate::smart_tool::SmartTool;
-#[derive(Debug)]
+use std::collections::HashMap;
+
+use crate::{report::Report, smart_tool::SmartTool};
+#[derive(Debug, Default)]
 pub struct SmartToolRoom {
-    smart_tools: Vec<SmartTool>,
+    smart_tools: HashMap<&'static str, SmartTool>,
 }
 
 impl SmartToolRoom {
-    ///Создает комнату со списком умных устройств
-    pub fn new(smart_tools: Vec<SmartTool>) -> SmartToolRoom {
-        SmartToolRoom { smart_tools }
-    }
-
     ///Возвращает количество устройств в комнате
     pub fn size(&self) -> usize {
         self.smart_tools.len()
     }
+
+    ///Добавляет устройство в дом под уникальным именемш
+    pub fn insert(&mut self, name: &'static str, tool: impl Into<SmartTool>) -> Option<SmartTool> {
+        self.smart_tools.insert(name, tool.into())
+    }
+
     ///Возвращает ссылку на устройство по указанному индексу
-    pub fn get(&self, ix: usize) -> &SmartTool {
-        &self.smart_tools[ix]
+    pub fn get(&self, name: &'static str) -> Option<&SmartTool> {
+        self.smart_tools.get(name)
     }
 
     ///Возвращает мутабельную ссылку на устройство по указанному индексу.
-    pub fn get_mut(&mut self, ix: usize) -> &mut SmartTool {
-        &mut self.smart_tools[ix]
+    pub fn get_mut(&mut self, name: &'static str) -> Option<&mut SmartTool> {
+        self.smart_tools.get_mut(name)
     }
-    /// Выводит в стандартный вывод отчёт о всех устройствах в комнате.
-    pub fn report(&self) {
-        println!("{:?}", self);
+
+    pub fn remove(&mut self, name: &'static str) -> Option<SmartTool> {
+        self.smart_tools.remove(name)
     }
 }
+
+impl Report for SmartToolRoom {}
+
+///Макрос для создания SmartRoom с парами ключ => значение
+#[macro_export]
+macro_rules! smart_room {
+    () => {
+        SmartToolRoom::default()
+    };
+
+    ($($key:expr => $value:expr),* $(,)?) => {{
+        let mut room = SmartToolRoom::default();
+        $(room.insert($key, $value);)*
+        room}
+    };
+}
+
 #[cfg(test)]
 mod tests {
     use crate::{
         electro_socket::ElectroSocket, smart_tool::SmartTool, smart_tool_room::SmartToolRoom,
         term_detector::TermDetector,
     };
-    use std::panic;
+    use std::{assert_matches, panic};
 
     fn setup() -> SmartToolRoom {
-        let st1 = SmartTool::TermDetector(TermDetector::new("detector"));
-        let st2 = SmartTool::ElectroSocket(ElectroSocket::new(false));
-        let st3 = SmartTool::ElectroSocket(ElectroSocket::new(true));
-        SmartToolRoom::new(vec![st1, st2, st3])
+        smart_room!("detector" => TermDetector::default(),
+            "socket1" => ElectroSocket::new(false),
+            "socket2" => ElectroSocket::new(true))
     }
 
     #[test]
     fn test_new() {
-        let result = panic::catch_unwind(|| {
-            setup();
-        });
+        let result = panic::catch_unwind(SmartToolRoom::default);
         assert!(result.is_ok(), "Код не должен паниковать");
+        assert_eq!(0, result.unwrap().size(), "Некорректно создан объект");
     }
 
     #[test]
@@ -63,54 +81,58 @@ mod tests {
     }
 
     #[test]
-    fn test_get() {
-        let r = setup();
-        let t = r.get(1);
-        assert!(
-            matches!(t, SmartTool::ElectroSocket { .. }),
-            "Возвращен неверный элемент"
-        );
-        if let SmartTool::ElectroSocket(e) = t {
-            assert!(!e.is_switch_on(), "Возвращен неверный элемент");
-        }
+    fn test_insert() {
+        let mut room = SmartToolRoom::default();
+        room.insert("new", ElectroSocket::new(true));
+        assert_eq!(1, room.size(), "Неверно отработала вставка");
     }
 
     #[test]
-    #[should_panic]
-    fn test_get_panic() {
+    fn test_get() {
         let r = setup();
-        r.get(100);
+        let t = r.get("socket1");
+        assert_matches!(
+            t,
+            Some(SmartTool::ElectroSocket(e)) if !e.is_switch_on(),
+            "Возвращен неверный элемент"
+        );
+    }
+
+    #[test]
+    fn test_get_none() {
+        let r = setup();
+        let t = r.get("camera");
+        assert!(t.is_none(), "Возвращен неверный элемент");
     }
 
     #[test]
     fn test_get_mut() {
         let mut r = setup();
-        let mut t = r.get_mut(1);
-        assert!(
-            matches!(t, SmartTool::ElectroSocket { .. }),
+        let t = r.get_mut("socket2");
+
+        assert_matches!(
+            t,
+            Some(SmartTool::ElectroSocket(e)) if e.is_switch_on(),
             "Возвращен неверный элемент"
         );
-        if let SmartTool::ElectroSocket(e) = t {
-            assert!(!e.is_switch_on(), "Возвращен неверный элемент");
-            e.switch_on();
-            assert!(e.is_switch_on(), "Возвращен неверный элемент");
-        }
     }
 
     #[test]
-    #[should_panic]
-    fn test_get_mut_panic() {
+    fn test_get_mut_none() {
         let mut r = setup();
-        r.get_mut(100);
+        let t = r.get_mut("micro");
+        assert!(t.is_none(), "Возвращен неверный элемент");
     }
 
     #[test]
-    fn test_report() {
-        let r = setup();
-        let result = panic::catch_unwind(|| {
-            r.report();
-        });
-
-        assert!(result.is_ok(), "Код не должен паниковать");
+    fn test_remove() {
+        let mut room = setup();
+        let socket = room.remove("socket2");
+        assert_eq!(2, room.size(), "Неверно отработало удаление");
+        assert_matches!(
+            socket,
+            Some(SmartTool::ElectroSocket(e)) if e.is_switch_on(),
+            "Возвращен неверный элемент"
+        );
     }
 }

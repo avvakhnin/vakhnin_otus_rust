@@ -1,14 +1,21 @@
 //! Умный дом, содержащий массив комнат.
-use crate::smart_tool_room::SmartToolRoom;
-#[derive(Debug)]
+use std::collections::HashMap;
+
+use crate::{
+    report::Report, smart_house_error::SmartHouseError, smart_tool::SmartTool,
+    smart_tool_room::SmartToolRoom,
+};
+#[derive(Debug, Default)]
 pub struct SmartHouse {
-    rooms: Vec<SmartToolRoom>,
+    rooms: HashMap<&'static str, SmartToolRoom>,
 }
 
 impl SmartHouse {
     ///Создаёт умный дом со списком комнгат с умными устройствами
-    pub fn new(rooms: Vec<SmartToolRoom>) -> Self {
-        SmartHouse { rooms }
+    pub fn new() -> Self {
+        SmartHouse {
+            rooms: HashMap::new(),
+        }
     }
 
     ///Возвращает количество комнат в доме
@@ -16,50 +23,80 @@ impl SmartHouse {
         self.rooms.len()
     }
 
+    ///Добавляет комнату в дом под уникальным именем
+    pub fn insert(&mut self, name: &'static str, room: SmartToolRoom) -> Option<SmartToolRoom> {
+        self.rooms.insert(name, room)
+    }
+
     ///Возвращает ссылку на комнату по указанному индексу.
-    pub fn get(&self, ix: usize) -> &SmartToolRoom {
-        &self.rooms[ix]
+    pub fn get(&self, name: &'static str) -> Option<&SmartToolRoom> {
+        self.rooms.get(name)
     }
 
     ///Возвращает мутабельную ссылку на комнату по указанному индексу.
-    pub fn get_mut(&mut self, ix: usize) -> &mut SmartToolRoom {
-        &mut self.rooms[ix]
+    pub fn get_mut(&mut self, name: &'static str) -> Option<&mut SmartToolRoom> {
+        self.rooms.get_mut(name)
     }
 
-    ///Выводит в стандартный вывод отчёт о всех комнатах.
-    pub fn report(&self) {
-        println!("{:?}", self);
+    pub fn remove(&mut self, name: &'static str) -> Option<SmartToolRoom> {
+        self.rooms.remove(name)
+    }
+
+    pub fn get_smart_tool(
+        &self,
+        room_name: &'static str,
+        tool_name: &'static str,
+    ) -> Result<&SmartTool, SmartHouseError> {
+        let room = self
+            .get(room_name)
+            .ok_or(SmartHouseError::RoomNotFound(room_name))?;
+
+        let tool = room
+            .get(tool_name)
+            .ok_or(SmartHouseError::ToolNotFound(tool_name))?;
+
+        Ok(tool)
     }
 }
+
+impl Report for SmartHouse {}
 
 #[cfg(test)]
 mod tests {
     use crate::{
-        electro_socket::ElectroSocket, smart_house::SmartHouse, smart_tool::SmartTool,
-        smart_tool_room::SmartToolRoom, term_detector::TermDetector,
+        electro_socket::ElectroSocket, smart_house::SmartHouse, smart_house_error::SmartHouseError,
+        smart_room, smart_tool::SmartTool, smart_tool_room::SmartToolRoom,
+        term_detector::TermDetector,
     };
-    use std::panic;
+    use std::{assert_matches, panic};
 
     fn setup() -> SmartHouse {
-        let st1 = SmartTool::TermDetector(TermDetector::new("detector 1"));
-        let st2 = SmartTool::ElectroSocket(ElectroSocket::new(false));
-        let st3 = SmartTool::ElectroSocket(ElectroSocket::new(true));
-        let str1 = SmartToolRoom::new(vec![st1, st2, st3]);
+        let mut house = SmartHouse::new();
+        house.insert(
+            "first",
+            smart_room!("a1" => TermDetector::default(),
+                "a2" => ElectroSocket::new(false),
+                "a3" => ElectroSocket::new(true)
+            ),
+        );
 
-        let st1 = SmartTool::ElectroSocket(ElectroSocket::new(true));
-        let st2 = SmartTool::TermDetector(TermDetector::new("detector 2"));
-        let str2 = SmartToolRoom::new(vec![st1, st2]);
+        house.insert(
+            "additional",
+            smart_room!(
+                "b1" => ElectroSocket::new(true),
+                "b2" => TermDetector::default()
+            ),
+        );
 
-        SmartHouse::new(vec![str1, str2])
+        house
     }
 
     #[test]
     fn test_new() {
-        let result = panic::catch_unwind(|| {
-            setup();
-        });
+        let result = panic::catch_unwind(SmartHouse::new);
 
         assert!(result.is_ok(), "Код не должен паниковать");
+        assert_eq!(0, result.unwrap().size(), "Некорректно создан объект");
     }
 
     #[test]
@@ -73,40 +110,75 @@ mod tests {
     }
 
     #[test]
-    fn test_get() {
-        let h = setup();
-        let r = h.get(1);
-        assert_eq!(2, r.size(), "Возвращен неверный элемент");
+    fn test_insert() {
+        let mut house = SmartHouse::new();
+        house.insert("new", smart_room!());
+        assert_eq!(1, house.size(), "Неверно отработала вставка");
     }
 
     #[test]
-    #[should_panic]
-    fn test_get_panic() {
+    fn test_get() {
         let h = setup();
-        h.get(100);
+        let r = h.get("additional");
+        assert_matches!(r, Some(room) if room.size() == 2, "Возвращен неверный элемент");
+    }
+
+    #[test]
+    fn test_get_none() {
+        let h = setup();
+        let r = h.get("bathroom");
+        assert!(r.is_none(), "Возвращен неверный элемент");
     }
 
     #[test]
     fn test_get_mut() {
         let mut h = setup();
-        let r = h.get_mut(0);
-        assert_eq!(3, r.size(), "Возвращен неверный элемент");
+        let r = h.get_mut("first");
+        assert_matches!(r, Some(room) if room.size() == 3, "Возвращен неверный элемент");
     }
 
     #[test]
-    #[should_panic]
-    fn test_get_mut_panix() {
+    fn test_get_mut_none() {
         let mut h = setup();
-        h.get_mut(100);
+        let r = h.get_mut("hall");
+        assert!(r.is_none(), "Возвращен неверный элемент");
     }
 
     #[test]
-    fn test_report() {
-        let r = setup();
-        let result = panic::catch_unwind(|| {
-            r.report();
-        });
+    fn test_get_smart_tool() {
+        let h = setup();
+        let st = h.get_smart_tool("first", "a3");
 
-        assert!(result.is_ok(), "Код не должен паниковать");
+        assert_matches!(st, Ok(SmartTool::ElectroSocket(t)) if t.is_switch_on(), "Некорректноу устройствао извлекли с get_smrt_tool");
+    }
+    #[test]
+    fn test_get_smart_tool_room_not_found() {
+        let h = setup();
+        let st = h.get_smart_tool("any_room", "a3");
+
+        assert_matches!(
+            st,
+            Err(SmartHouseError::RoomNotFound(_)),
+            "Некорректно определили ошибку при отсутвии комнаты"
+        );
+    }
+    #[test]
+    fn test_remove() {
+        let mut home = setup();
+        let room = home.remove("first");
+        assert_eq!(1, home.size(), "Неверно отработало удаление");
+        assert_matches!(room, Some(room) if room.size() == 3, "Неверно отработало удаление");
+    }
+
+    #[test]
+    fn test_get_smart_tool_tool_not_found() {
+        let h = setup();
+        let st = h.get_smart_tool("first", "u3");
+
+        assert_matches!(
+            st,
+            Err(SmartHouseError::ToolNotFound(_)),
+            "Некорректно определили ошибку при отсутвии устройства"
+        );
     }
 }
