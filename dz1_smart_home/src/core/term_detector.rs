@@ -24,7 +24,7 @@ impl fmt::Debug for TermDetector {
 #[cfg(test)]
 mod tests {
 
-    use crate::term_detector::TermDetector;
+    use super::TermDetector;
 
     #[test]
     fn test_value_in_range() {

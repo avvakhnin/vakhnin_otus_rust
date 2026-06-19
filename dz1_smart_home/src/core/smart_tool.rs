@@ -1,6 +1,6 @@
 //! Умное устройство
 //! Реальная реализация может принадлежать одному из нескольких типов
-use crate::{electro_socket::ElectroSocket, report::Report, term_detector::TermDetector};
+use crate::core::{electro_socket::ElectroSocket, report::Report, term_detector::TermDetector};
 
 #[derive(Debug)]
 pub enum SmartTool {
@@ -27,9 +27,8 @@ mod tests {
 
     use std::assert_matches;
 
-    use crate::{
-        electro_socket::ElectroSocket, smart_tool::SmartTool, term_detector::TermDetector,
-    };
+    use super::*;
+    use crate::core::{electro_socket::ElectroSocket, term_detector::TermDetector};
 
     #[test]
     fn test_debug() {

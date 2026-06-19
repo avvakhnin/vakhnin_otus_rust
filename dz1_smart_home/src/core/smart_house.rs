@@ -1,7 +1,7 @@
 //! Умный дом, содержащий массив комнат.
 use std::collections::HashMap;
 
-use crate::{
+use crate::core::{
     report::Report, smart_house_error::SmartHouseError, smart_tool::SmartTool,
     smart_tool_room::SmartToolRoom,
 };
@@ -63,11 +63,13 @@ impl Report for SmartHouse {}
 
 #[cfg(test)]
 mod tests {
-    use crate::{
-        electro_socket::ElectroSocket, smart_house::SmartHouse, smart_house_error::SmartHouseError,
-        smart_room, smart_tool::SmartTool, smart_tool_room::SmartToolRoom,
-        term_detector::TermDetector,
+
+    use super::*;
+    use crate::core::{
+        electro_socket::ElectroSocket, smart_house_error::SmartHouseError, smart_tool::SmartTool,
+        smart_tool_room::SmartToolRoom, term_detector::TermDetector,
     };
+    use crate::smart_room;
     use std::{assert_matches, panic};
 
     fn setup() -> SmartHouse {

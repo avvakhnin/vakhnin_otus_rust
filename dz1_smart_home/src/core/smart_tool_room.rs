@@ -1,7 +1,7 @@
 //! Комната, содержащая массив умных устройств
 use std::collections::HashMap;
 
-use crate::{report::Report, smart_tool::SmartTool};
+use crate::core::{report::Report, smart_tool::SmartTool};
 #[derive(Debug, Default)]
 pub struct SmartToolRoom {
     smart_tools: HashMap<&'static str, SmartTool>,
@@ -51,9 +51,9 @@ macro_rules! smart_room {
 
 #[cfg(test)]
 mod tests {
-    use crate::{
-        electro_socket::ElectroSocket, smart_tool::SmartTool, smart_tool_room::SmartToolRoom,
-        term_detector::TermDetector,
+    use super::*;
+    use crate::core::{
+        electro_socket::ElectroSocket, smart_tool::SmartTool, term_detector::TermDetector,
     };
     use std::{assert_matches, panic};
 

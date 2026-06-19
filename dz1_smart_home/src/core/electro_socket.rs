@@ -51,7 +51,7 @@ impl fmt::Debug for ElectroSocket {
 #[cfg(test)]
 mod tests {
 
-    use crate::electro_socket::ElectroSocket;
+    use super::*;
 
     #[test]
     fn test_default() {

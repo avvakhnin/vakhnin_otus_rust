@@ -1,9 +1,9 @@
-use std::assert_matches;
-
-use dz1_smart_home::{
-    electro_socket::ElectroSocket, report::Report, smart_house::SmartHouse, smart_room,
-    smart_tool::SmartTool, smart_tool_room::SmartToolRoom, term_detector::TermDetector,
+use dz1_smart_home::core::{
+    electro_socket::ElectroSocket, report::Report, smart_house::SmartHouse, smart_tool::SmartTool,
+    smart_tool_room::SmartToolRoom, term_detector::TermDetector,
 };
+use dz1_smart_home::smart_room;
+use std::assert_matches;
 
 fn main() {
     //Предсоздаём набор приборов
