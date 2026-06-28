@@ -25,7 +25,7 @@ fn main() {
     let args: Vec<String> = std::env::args().collect();
     let binding = "127.0.0.1:4321".to_string();
     let addr = args.get(2).unwrap_or(&binding);
-    info!("Запускаем TCP сервер по адрессу {}", addr);
+    info!("Запускаем TCP сервер по адресу {}", addr);
     let listener = TcpListener::bind(addr).expect("Не удалось запустить TCP сервер");
     debug!("Сервер успешно запущен");
 
