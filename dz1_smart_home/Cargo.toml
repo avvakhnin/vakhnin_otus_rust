@@ -4,6 +4,15 @@ version = "0.1.0"
 edition = "2024"
 authors = ["Anton V. Vakhnin"]
 
+[[bin]]
+name = "electro_socket_server"
+path = "src/bin/electro_socket_server.rs"
+
+[[bin]]
+name = "term_detector_server"
+path = "src/bin/term_detector_server.rs"
+
+
 [dependencies]
 rand = "=0.10.1"
 log= "0.4"

@@ -12,7 +12,7 @@ use log::{debug, error, info};
 
 /// Запускает TCP сервер по адресу переданному в командной строке
 /// Пример запуска:
-/// cargo run smart_home_confirmation 127.0.0.1:9876
+/// cargo run --bin electro_socket_server 127.0.0.1:9876
 /// Если не передать адресс, то сервер поднимется по адресу 127.0.0.1:4321
 /// Сервер принимает следующие запросы в виде набора байтов:
 /// "switch_on_" - команда на включение розетки, в ответ ничего не вернётся
@@ -24,7 +24,7 @@ fn main() {
 
     let args: Vec<String> = std::env::args().collect();
     let binding = "127.0.0.1:4321".to_string();
-    let addr = args.get(2).unwrap_or(&binding);
+    let addr = args.get(1).unwrap_or(&binding);
     info!("Запускаем TCP сервер по адресу {}", addr);
     let listener = TcpListener::bind(addr).expect("Не удалось запустить TCP сервер");
     debug!("Сервер успешно запущен");
