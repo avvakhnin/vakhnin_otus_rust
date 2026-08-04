@@ -1,0 +1,32 @@
+
+
+run-1:
+    cargo run --example smart_home_report
+
+run-2:
+    cargo run --example smart_home_configuration
+
+run-3:
+    cargo run --example smart_home_tool_getter
+
+run-ex: run-1 run-2 run-3
+
+#Запуск сервера розетки
+socket:
+    RUST_LOG=debug cargo run --bin electro_socket_server 127.0.0.1:9876
+
+#Включение розетки
+sw_on:
+    printf "switch_on_" | nc 127.0.0.1 9876
+
+#Выключение розетки
+sw_off:
+    printf "switch_off" | nc 127.0.0.1 9876
+
+#Запрос статуса включения
+sw_status:
+    printf "get_status" | nc 127.0.0.1 9876
+
+#Запрос текщей мощности розетки
+sw_power:
+    printf "get_power_" | nc 127.0.0.1 9876
